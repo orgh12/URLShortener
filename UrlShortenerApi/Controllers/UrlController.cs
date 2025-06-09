@@ -21,7 +21,12 @@ public class UrlController : ControllerBase
     {
         if (request == null)
         {
-            return BadRequest();
+            return BadRequest("Request object is null");
+        }
+
+        if (request.OriginalUrl == "")
+        {
+            return BadRequest("Original URL cannot be empty");
         }
         string shortenedUrl = _urlService.ShortenUrl(request.OriginalUrl);
         return Ok(shortenedUrl);

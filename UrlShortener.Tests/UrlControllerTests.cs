@@ -30,4 +30,29 @@ public class UrlControllerTests
         Assert.NotNull(okObjectResult);
         Assert.Equal(expected, okObjectResult.Value);
     }
+
+    [Fact]
+    public void PostEmptyUrl_Returns_BadRequest()
+    {
+        //Arrange
+        var urlService = new Mock<IUrlService>();
+        var request = new ShortenRequest()
+        {
+            OriginalUrl = "",
+        };
+        var controller = new UrlController(urlService.Object);
+        
+        //Act
+        var result = controller.Post(request);
+        
+        //Assert
+        var badRequest = result as BadRequestObjectResult;
+        Assert.NotNull(badRequest);
+        Assert.Equal("Original URL cannot be empty", badRequest.Value);
+    }
+
+    public void PostNullObeject_Returns_BadRequest()
+    {
+        //TBD
+    }
 }
