@@ -8,16 +8,16 @@ namespace UrlShortener.Tests;
 
 public class RedirectControllerTests
 {
-    [Fact]
-    public void GetShortCode_Returns_Redirect()
+    [Theory]
+    [InlineData("a78db0","https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-9.0&tabs=visual-studio")]
+    [InlineData("a44ffd","https://example.com")]
+    public void GetShortCode_Returns_Redirect(string shortCode, string originalUrl)
     {
         
         //Arrange
-        var shortCode = "a78db0";
-        var originalUrl =
-            "https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-9.0&tabs=visual-studio";
         var urlServiceMock = new Mock<IUrlService>();
         urlServiceMock.Setup(u => u.GetOriginalUrl(shortCode)).Returns(originalUrl);
+        
         var controller = new RedirectController(urlServiceMock.Object);
         
         //Act
