@@ -28,4 +28,21 @@ public class RedirectControllerTests
         Assert.NotNull(redirectResult);
         Assert.Equal(originalUrl, redirectResult.Url);
     }
+
+    [Theory]
+    [InlineData("yd8daw")]
+    public void GetShortCode_Returns_NotFound(string shortCode)
+    {
+        //Arrange
+        var urlServiceMock = new Mock<IUrlService>();
+        urlServiceMock.Setup(u => u.GetOriginalUrl(shortCode)).Returns(() => null);
+        var controller = new RedirectController(urlServiceMock.Object);
+        
+        //Act
+        var result = controller.Get(shortCode);
+        
+        //Assert
+        var notFoundResult = result as NotFoundResult;
+        Assert.NotNull(notFoundResult);
+    }
 }
