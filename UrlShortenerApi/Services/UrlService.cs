@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Base62;
 using Microsoft.AspNetCore.Http.HttpResults;
 using UrlShortenerApi.Data;
 using UrlShortenerApi.Interfaces;
@@ -47,17 +48,23 @@ public class UrlService : IUrlService
         return entry.OriginalUrl;
     }
 
-    public string GenerateCode(string shortCode)
+    public string GenerateCode(string originalUrl)
     {
         SHA256 sha256 = SHA256.Create();
-        byte[] data = sha256.ComputeHash(Encoding.UTF8.GetBytes(shortCode));
-        var sBuilder = new StringBuilder();
+        string shortCode;
+        int counter = 0;
 
-        for (int i = 0; i < data.Length; i++)
+        do
         {
-            sBuilder.Append(data[i].ToString("x2"));
+            string input = counter == 0 ? originalUrl : originalUrl + counter.ToString();
+            byte[] data = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+            var dataBase62 = data.ToBase62();
+            shortCode = dataBase62.Substring(0, 6);
+            counter++;
         }
-        
-        return sBuilder.ToString().Substring(0,6);
+        while (_context.UrlMappings.Any(u => u.ShortCode == shortCode));
+
+        return shortCode;
     }
+
 }
