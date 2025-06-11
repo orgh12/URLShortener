@@ -38,7 +38,13 @@ public class UrlService : IUrlService
     public string? GetOriginalUrl(string shortCode)
     {
         var entry = _context.UrlMappings.FirstOrDefault(u => u.ShortCode == shortCode);
-        return entry?.OriginalUrl;
+        if (entry == null)
+        {
+            return null;
+        }
+        entry.ClickedOn++;
+        _context.SaveChanges();
+        return entry.OriginalUrl;
     }
 
     public string GenerateCode(string shortCode)
