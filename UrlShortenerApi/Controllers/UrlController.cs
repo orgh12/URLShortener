@@ -19,16 +19,11 @@ public class UrlController : ControllerBase
     [HttpPost]
     public IActionResult Post([FromBody] ShortenRequest request)
     {
-        if (request == null)
-        {
-            return BadRequest("Request object is null");
-        }
-
         if (request.OriginalUrl == "")
         {
             return BadRequest("Original URL cannot be empty");
         }
-        string shortenedUrl = _urlService.ShortenUrl(request.OriginalUrl);
+        string shortenedUrl = _urlService.ShortenUrl(request);
         return Ok(shortenedUrl);
     }
 }

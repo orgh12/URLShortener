@@ -16,19 +16,21 @@ public class UrlService : IUrlService
     {
         _context = context;
     }
-    public string ShortenUrl(string originalUrl)
+    public string ShortenUrl(ShortenRequest request)
     {
-        var existing = _context.UrlMappings.FirstOrDefault(u => u.OriginalUrl == originalUrl);
+        var existing = _context.UrlMappings.FirstOrDefault(u => u.OriginalUrl == request.OriginalUrl);
         if (existing != null)
         {
             return _baseUrl + existing.ShortCode;
         }
-        var shortenedUrl = GenerateCode(originalUrl);
+        var shortenedUrl = GenerateCode(request.OriginalUrl);
         
         _context.UrlMappings.Add(new UrlMapping
         {
-            OriginalUrl = originalUrl,
+            OriginalUrl = request.OriginalUrl,
             ShortCode   = shortenedUrl,
+            CreatedOn = DateTime.Now,
+            ExpiresOn = request.ExpiresInDays == null ? DateTime.Now.AddDays(7) : DateTime.Now.AddDays(request.ExpiresInDays.Value),
         });
         _context.SaveChanges();
         
