@@ -9,6 +9,6 @@ public class UrlMapping
     public required string ShortCode { get; set; }
     [MaxLength(2000)]
     public required string OriginalUrl { get; set; }
-    public int ClickedOn { get; set; } = 0;
+    public int ClickedOn { get; set; }
     public DateTime CreatedOn { get; set; } = DateTime.Now;
 }

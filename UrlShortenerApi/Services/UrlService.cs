@@ -1,7 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
 using Base62;
-using Microsoft.AspNetCore.Http.HttpResults;
 using UrlShortenerApi.Data;
 using UrlShortenerApi.Interfaces;
 using UrlShortenerApi.Models;
