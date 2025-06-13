@@ -17,11 +17,16 @@ public class RedirectController : ControllerBase
     [HttpGet("{shortCode}")]
     public IActionResult Get([FromRoute] string shortCode)
     {
-        var originalUrl = _urlService.GetOriginalUrl(shortCode);
-        if (originalUrl == null)
+        var response = _urlService.GetOriginalUrl(shortCode);
+        if (response == null)
         {
             return NotFound();
         }
-        return Redirect(originalUrl);
+
+        if (response.Expired)
+        {
+            return BadRequest("This Url has Expired");
+        }
+        return Redirect(response.OriginalUrl);
     }
 }

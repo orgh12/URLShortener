@@ -37,16 +37,29 @@ public class UrlService : IUrlService
         return _baseUrl + shortenedUrl;
     }
 
-    public string? GetOriginalUrl(string shortCode)
+    public GetOriginalUrlResponse? GetOriginalUrl(string shortCode)
     {
         var entry = _context.UrlMappings.FirstOrDefault(u => u.ShortCode == shortCode);
         if (entry == null)
         {
             return null;
         }
+
+        if (DateTime.Compare(entry.ExpiresOn, DateTime.Now) <= 0)
+        {
+            return new GetOriginalUrlResponse
+            {
+                Expired = true,
+                OriginalUrl = ""
+            };
+        }
         entry.ClickedOn++;
         _context.SaveChanges();
-        return entry.OriginalUrl;
+        return new GetOriginalUrlResponse
+        {
+            Expired = false,
+            OriginalUrl = entry.OriginalUrl,
+        };
     }
 
     public string GenerateCode(string originalUrl)
