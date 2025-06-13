@@ -5,7 +5,7 @@ namespace UrlShortenerApi.Models;
 public class UrlMapping
 {
     public int Id { get; set; }
-    [MaxLength(8)]
+    [MaxLength(20)]
     public required string ShortCode { get; set; }
     [MaxLength(2000)]
     public required string OriginalUrl { get; set; }

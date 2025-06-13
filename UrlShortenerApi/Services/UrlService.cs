@@ -1,7 +1,9 @@
 using System.Security.Cryptography;
 using System.Text;
 using Base62;
+using Microsoft.IdentityModel.Tokens;
 using UrlShortenerApi.Data;
+using UrlShortenerApi.Helpers;
 using UrlShortenerApi.Interfaces;
 using UrlShortenerApi.Models;
 
@@ -16,25 +18,26 @@ public class UrlService : IUrlService
     {
         _context = context;
     }
-    public string ShortenUrl(ShortenRequest request)
+    public string ShortenUrl(ShortenRequest request, ShortenRequestQuery query)
     {
         var existing = _context.UrlMappings.FirstOrDefault(u => u.OriginalUrl == request.OriginalUrl);
         if (existing != null)
         {
             return _baseUrl + existing.ShortCode;
         }
-        var shortenedUrl = GenerateCode(request.OriginalUrl);
-        
+
+        var shortCode = !string.IsNullOrWhiteSpace(query.CustomUrl) ? query.CustomUrl : GenerateCode(request.OriginalUrl);
+        //check for dupe custom url - TBD
         _context.UrlMappings.Add(new UrlMapping
         {
             OriginalUrl = request.OriginalUrl,
-            ShortCode   = shortenedUrl,
+            ShortCode   = shortCode,
             CreatedOn = DateTime.Now,
             ExpiresOn = request.ExpiresInDays == null ? DateTime.Now.AddDays(7) : DateTime.Now.AddDays(request.ExpiresInDays.Value),
         });
         _context.SaveChanges();
         
-        return _baseUrl + shortenedUrl;
+        return _baseUrl + shortCode;
     }
 
     public GetOriginalUrlResponse? GetOriginalUrl(string shortCode)

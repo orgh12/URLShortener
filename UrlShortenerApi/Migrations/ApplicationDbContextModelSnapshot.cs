@@ -46,8 +46,8 @@ namespace UrlShortenerApi.Migrations
 
                     b.Property<string>("ShortCode")
                         .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
