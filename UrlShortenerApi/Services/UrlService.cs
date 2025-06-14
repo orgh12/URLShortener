@@ -29,6 +29,12 @@ public class UrlService : IUrlService
         
         if (existing != null && existing.OriginalUrl == request.OriginalUrl)
         {
+            if (request.ExpiresInDays != null)
+            {
+                existing.ExpiresOn = DateTime.Now.AddDays(request.ExpiresInDays.Value);
+                _context.SaveChanges();
+            }
+            
             return new ShortenResponse
             {
                 Status = true,

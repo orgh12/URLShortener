@@ -3,30 +3,35 @@ document.getElementById("shorten-form").addEventListener("submit", async (e) => 
 
     const urlInput = document.getElementById("url-input");
     const expiryInput = document.getElementById("expiry-input");
+    const customInput = document.getElementById("custom-url-input");
     const result = document.getElementById("result");
 
     const originalUrl = urlInput.value.trim();
-    const expiresInDays = parseInt(expiryInput.value, 10);
+    const expiresInDays = parseFloat(expiryInput.value);
+    const customUrl = customInput.value.trim();
 
-    // Basic validation
+    result.textContent = "";
+    result.classList.remove("error");
+
     if (!originalUrl) {
         result.textContent = "Please enter a valid URL.";
         result.classList.add("error");
         return;
     }
 
-    if (
-        isNaN(expiresInDays) ||
-        expiresInDays < 1 ||
-        expiresInDays > 365
-    ) {
-        result.textContent = "Expiry must be between 1 and 365 days.";
+    if (isNaN(expiresInDays) || expiresInDays <= 0) {
+        result.textContent = "Expiry must be a number greater than 0.";
         result.classList.add("error");
         return;
     }
 
     try {
-        const response = await fetch("/api/shorten", {
+        let endpoint = "/api/shorten";
+        if (customUrl) {
+            endpoint += `?CustomUrl=${encodeURIComponent(customUrl)}`;
+        }
+
+        const response = await fetch(endpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -34,11 +39,16 @@ document.getElementById("shorten-form").addEventListener("submit", async (e) => 
             body: JSON.stringify({ originalUrl, expiresInDays }),
         });
 
-        if (!response.ok) throw new Error("Failed to shorten URL");
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            result.textContent = errorMessage || "Error shortening URL.";
+            result.classList.add("error");
+            return;
+        }
 
         const shortUrl = await response.text();
 
-        result.textContent = `Short URL: `;
+        result.textContent = "";
         result.classList.remove("error");
 
         const link = document.createElement("a");
@@ -47,11 +57,10 @@ document.getElementById("shorten-form").addEventListener("submit", async (e) => 
         link.target = "_blank";
         link.rel = "noopener noreferrer";
 
-        result.innerHTML = "";
         result.appendChild(document.createTextNode("Short URL: "));
         result.appendChild(link);
     } catch (error) {
-        result.textContent = "Error shortening URL.";
+        result.textContent = "Network error. Please try again.";
         result.classList.add("error");
     }
 });

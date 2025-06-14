@@ -10,17 +10,28 @@
 <div id="main">
   <h1>URL Shortener</h1>
   <form id="shorten-form" novalidate>
-    <input type="url" id="url-input" placeholder="Enter a long URL" required />
     <input
-            type="number"
-            id="expiry-input"
-            placeholder="Expiry (days)"
-            min="1"
-            max="365"
-            value="7"
+            type="url"
+            id="url-input"
+            placeholder="Enter a long URL"
             required
     />
-    <button type="submit">Shorten</button>
+    <input
+            type="text"
+            id="custom-url-input"
+            placeholder="Custom short URL (optional)"
+    />
+    <div class="form-row">
+      <input
+              type="number"
+              id="expiry-input"
+              placeholder="Expiry (days)"
+              min="1"
+              value="7"
+              required
+      />
+      <button type="submit">Shorten</button>
+    </div>
   </form>
   <p id="result"></p>
 </div>
