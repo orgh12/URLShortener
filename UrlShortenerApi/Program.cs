@@ -23,10 +23,12 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.CanConnect();
+    
+    context.Database.Migrate();
     
     var _ = context.UrlMappings.FirstOrDefault();
 }
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
