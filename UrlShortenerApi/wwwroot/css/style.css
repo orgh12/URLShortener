@@ -1,0 +1,98 @@
+/* Reset some defaults */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#main {
+    background: white;
+    padding: 2.5rem 4rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 640px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-weight: 700;
+    font-size: 2.5rem;
+}
+
+form {
+    display: flex;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+input[type="url"] {
+    flex: 4 1 450px;   /* longer width */
+    padding: 1.25rem 1.5rem;
+    font-size: 1.35rem;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+    min-width: 400px;
+    height: 56px;
+}
+
+input[type="number"] {
+    flex: 1 1 130px;   /* shorter width */
+    padding: 1.25rem 1.5rem;
+    font-size: 1.35rem;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+    min-width: 120px;
+    height: 56px;
+}
+
+input[type="url"]:focus,
+input[type="number"]:focus {
+    border-color: #4f46e5;
+    outline: none;
+}
+
+button {
+    flex: 0 0 auto;
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    padding: 0 2.5rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 1.35rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 140px;
+    height: 56px;
+}
+
+button:hover {
+    background-color: #4338ca;
+}
+
+#result {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #111;
+    word-wrap: break-word;
+}
+
+#result.error {
+    color: #e11d48; /* Red */
+}
