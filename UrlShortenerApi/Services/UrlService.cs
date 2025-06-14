@@ -18,26 +18,54 @@ public class UrlService : IUrlService
     {
         _context = context;
     }
-    public string ShortenUrl(ShortenRequest request, ShortenRequestQuery query)
+    public ShortenResponse ShortenUrl(ShortenRequest request, ShortenRequestQuery query)
     {
-        var existing = _context.UrlMappings.FirstOrDefault(u => u.OriginalUrl == request.OriginalUrl);
-        if (existing != null)
+        var hasCustom = !string.IsNullOrWhiteSpace(query.CustomUrl);
+        
+        var existing = _context.UrlMappings
+            .FirstOrDefault(u => 
+                u.OriginalUrl == request.OriginalUrl || 
+                (hasCustom && u.ShortCode == query.CustomUrl));
+        
+        if (existing != null && existing.OriginalUrl == request.OriginalUrl)
         {
-            return _baseUrl + existing.ShortCode;
+            return new ShortenResponse
+            {
+                Status = true,
+                Url = _baseUrl + existing.ShortCode,
+            };
         }
+        
+        if (hasCustom && existing != null && existing.ShortCode == query.CustomUrl)
+        {
+            return new ShortenResponse()
+            {
+                Status = false,
+                ErrorMessage = "Custom short URL is already in use."
+            };
+        }
+        
+        string shortCode = hasCustom
+            ? query.CustomUrl!
+            : GenerateCode(request.OriginalUrl);
 
-        var shortCode = !string.IsNullOrWhiteSpace(query.CustomUrl) ? query.CustomUrl : GenerateCode(request.OriginalUrl);
-        //check for dupe custom url - TBD
         _context.UrlMappings.Add(new UrlMapping
         {
             OriginalUrl = request.OriginalUrl,
-            ShortCode   = shortCode,
+            ShortCode = shortCode,
             CreatedOn = DateTime.Now,
-            ExpiresOn = request.ExpiresInDays == null ? DateTime.Now.AddDays(7) : DateTime.Now.AddDays(request.ExpiresInDays.Value),
+            ExpiresOn = request.ExpiresInDays == null
+                ? DateTime.Now.AddDays(7)
+                : DateTime.Now.AddDays(request.ExpiresInDays.Value)
         });
+
         _context.SaveChanges();
         
-        return _baseUrl + shortCode;
+        return new ShortenResponse()
+        {
+            Status = true,
+            Url = _baseUrl + shortCode
+        };
     }
 
     public GetOriginalUrlResponse? GetOriginalUrl(string shortCode)

@@ -29,7 +29,13 @@ public class UrlController : ControllerBase
         {
             return BadRequest("Custom URL cannot be longer than 20 characters");
         }
-        string shortenedUrl = _urlService.ShortenUrl(request, query);
-        return Ok(shortenedUrl);
+        
+        var result = _urlService.ShortenUrl(request, query);
+        if (!result.Status)
+        {
+            return Conflict(result.ErrorMessage);
+        }
+        
+        return Ok(result.Url);
     }
 }
